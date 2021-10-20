@@ -1,7 +1,7 @@
 <template>
   <div class="home-container">
     <!-- 头部区域 -->
-    <van-nav-bar class="page-nav-bar">
+    <van-nav-bar class="page-nav-bar" fixed>
       <!-- 左侧的插槽 -->
       <template #left>头条新闻 </template>
       <!-- 右侧的插槽 -->
@@ -19,9 +19,10 @@
       sticky
       offset-top="46px"
     >
-      <van-tab v-for="item in userChannel" :key="item.id" :title="item.name">{{
-        item.name
-      }}</van-tab>
+      <van-tab v-for="item in userChannel" :key="item.id" :title="item.name">
+        <!-- 在每一个用户频道下，渲染出对应的“文章列表组件” -->
+        <art-list :channel-id="item.id"></art-list>
+      </van-tab>
     </van-tabs>
     <!-- 频道管理的小图标 -->
     <van-icon name="plus" class="plus" size="16"></van-icon>
@@ -30,6 +31,8 @@
 
 <script>
 import { getUserChannelAPI } from "@/api/homeAPI";
+import ArtList from "@/components/ArtList/ArtList.vue";
+
 export default {
   name: "Home",
   data() {
@@ -53,10 +56,18 @@ export default {
   created() {
     this.initUserChannel();
   },
+  components: {
+    ArtList,
+  },
 };
 </script>
 
 <style lang="less" scoped>
+.home-container {
+  padding-top: 92px;
+  padding-bottom: 50px;
+}
+
 /deep/ .channel-tabs {
   .van-tabs__wrap {
     height: 82px;
