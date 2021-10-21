@@ -10,3 +10,9 @@ body {
 .page-nav-bar .van-nav-bar__left {
   color: white;
 }
+.van-nav-bar {
+  background-color: #007bff;
+}
+.van-nav-bar .van-nav-bar__title {
+  color: white;
+}
