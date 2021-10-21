@@ -33,16 +33,54 @@
             &nbsp;&nbsp; {{ article.pubdate | dateFormat }}</span
           >
           <!-- 关闭按钮 -->
-          <van-icon name="cross" />
+          <van-icon name="cross" @click.stop="show = true" />
         </div> </template
     ></van-cell>
+    <!-- 反馈的动作面板 -->
+    <van-action-sheet
+      v-model="show"
+      cancel-text="取消"
+      :closeable="false"
+      @closed="isFirst = true"
+      get-container="body"
+    >
+      <div v-if="isFirst">
+        <!-- 循环渲染可选项 -->
+        <van-cell
+          :title="item.name"
+          clickable
+          class="center-title"
+          v-for="item in actions"
+          :key="item.name"
+          @click="onCellClick(item.name)"
+        />
+      </div>
+      <div v-else>
+        <van-cell
+          title="返回"
+          clickable
+          title-class="center-title"
+          @click="isFirst = true"
+        />
+        <van-cell
+          :title="item.label"
+          clickable
+          title-class="center-title"
+          v-for="item in reports"
+          :key="item.type"
+          @click="reportArticle(item.type)"
+        />
+      </div>
+    </van-action-sheet>
   </div>
 </template>
-    </van-cell>
-  </div>
-</template>
+   
 
 <script>
+import reports from "@/api/reports";
+import { Toast } from "vant";
+import { dislikeArticleAPI, reportArticleAPI } from "@/api/homeAPI.js";
+
 export default {
   name: "ArtItem",
   props: {
@@ -50,6 +88,55 @@ export default {
     article: {
       type: Object, // 数据类型
       required: true, // 必填项
+    },
+  },
+  computed: {
+    artId() {
+      console.log(this.article.art_id);
+      return this.article.art_id.toString();
+    },
+  },
+  data() {
+    return {
+      show: false,
+      actions: [
+        { name: "不感兴趣" },
+        { name: "反馈垃圾内容" },
+        { name: "拉黑作者" },
+      ],
+      // 是否展示第一个反馈面板
+      isFirst: true,
+      reports,
+    };
+  },
+  methods: {
+    // 一级选项的点击事件处理函数
+    async onCellClick(name) {
+      if (name === "不感兴趣") {
+        //调用API接口，将文章设置为不感兴趣
+        const { data: res } = await dislikeArticleAPI(this.artId);
+        if (res.message === "OK") {
+          this.$emit("remove-article", this.artId);
+        }
+        console.log("不感兴趣");
+        this.show = false;
+      } else if (name === "拉黑作者") {
+        console.log("拉黑作者");
+        this.show = false;
+      } else if (name === "反馈垃圾内容") {
+        // TODO：展示二级反馈面板
+        this.isFirst = false;
+      }
+    },
+    async reportArticle(type) {
+      // 1. 发起举报文章的请求
+      const { data: res } = await reportArticleAPI(this.artId, type);
+      if (res.message === "OK") {
+        // 2. 炸楼操作，触发自定义事件，把文章 Id 发送给父组件
+        this.$emit("remove-article", this.artId);
+      }
+      // 3. 关闭动作面板
+      this.show = false;
     },
   },
 };
@@ -78,5 +165,8 @@ export default {
 .thumb-box {
   display: flex;
   justify-content: space-between;
+}
+.center-title {
+  text-align: center;
 }
 </style>
