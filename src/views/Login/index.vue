@@ -49,6 +49,8 @@
 
 <script>
 import { login } from "@/api/user.js";
+
+import { mapMutations } from "vuex";
 export default {
   name: "loginIndex",
   data() {
@@ -76,26 +78,33 @@ export default {
     };
   },
   methods: {
+    ...mapMutations(["updateTokenInfo"]),
     async onSubmit() {
-      const user = this.user;
-
+      // const user = this.user
+      const { data: res } = await login(this.user);
       this.$toast.loading({
         message: "登录中...",
         forbidClick: true,
         duration: 0,
       });
-
-      try {
-        const { data } = await login(this.user);
-        this.$store.commit("updateTokenInfo", data.data);
-        this.$toast.success("登录成功");
-      } catch (err) {
-        if (err.response.status === 400) {
-          this.$toast.fail("手机号或验证码错误");
-        } else {
-          this.$toast.fail("登录失败，请稍后再试");
-        }
+      if (res.message === "OK") {
+        // 3. 把登录成功的结果，存储到 vuex 中
+        this.updateTokenInfo(res.data);
+        // 4. 登录成功后，跳转到主页
+        this.$router.push("/");
       }
+
+      // try {
+      //   const { data } = await login(this.user);
+      //   this.$store.commit("updateTokenInfo", data.data);
+      //   this.$toast.success("登录成功");
+      // } catch (err) {
+      //   if (err.response.status === 400) {
+      //     this.$toast.fail("手机号或验证码错误");
+      //   } else {
+      //     this.$toast.fail("登录失败，请稍后再试");
+      //   }
+      // }
     },
     async onSendSms() {
       try {

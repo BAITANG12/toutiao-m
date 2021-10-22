@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div @click="$router.push('/article/' + artId)">
     <van-cell>
       <!-- 标题区域的插槽 -->
       <template #title>
@@ -98,7 +98,7 @@ export default {
   },
   computed: {
     artId() {
-      console.log(this.article.art_id);
+      // console.log(this.article.art_id);
       return this.article.art_id.toString();
     },
   },
