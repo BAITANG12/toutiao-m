@@ -33,7 +33,7 @@
             &nbsp;&nbsp; {{ article.pubdate | dateFormat }}</span
           >
           <!-- 关闭按钮 -->
-          <van-icon name="cross" @click.stop="show = true" />
+          <van-icon name="cross" @click.stop="show = true" v-if="closable" />
         </div> </template
     ></van-cell>
     <!-- 反馈的动作面板 -->
@@ -88,6 +88,12 @@ export default {
     article: {
       type: Object, // 数据类型
       required: true, // 必填项
+    },
+    // 是否展示关闭按钮
+    closable: {
+      type: Boolean,
+      // 默认值为 true，表示展示关闭按钮
+      default: true,
     },
   },
   computed: {
