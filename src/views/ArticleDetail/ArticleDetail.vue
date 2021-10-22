@@ -76,6 +76,9 @@
         >
       </div>
     </div>
+
+    <!-- 文章的评论组件 -->
+    <art-cmt :art-id="id"></art-cmt>
   </div>
 </template>
 
@@ -87,6 +90,8 @@ import {
   addLikeAPI,
   delLikeAPI,
 } from "@/api/articleAPI.js";
+// 导入文章的评论组件
+import ArtCmt from "@/components/ArtCmt/ArtCmt.vue";
 export default {
   name: "ArticleDetail",
   // props 中的 id 是文章的 id（已经调用了大数的 .toString() 方法）
@@ -150,6 +155,9 @@ export default {
   },
   created() {
     this.initArticle();
+  },
+  components: {
+    ArtCmt,
   },
 };
 </script>
