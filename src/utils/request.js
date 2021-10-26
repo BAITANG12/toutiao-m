@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { Toast } from 'vant'
 import store from '@/store/index.js'
-
+import { exchangeTokenAPI } from '@/api/user.js'
 // 调用 axios.create() 方法，创建 axios 的实例对象
 const instance = axios.create({
     // 请求根路径
@@ -27,7 +27,28 @@ instance.interceptors.response.use(
         Toast.clear()
         return response
     },
-    error => {
+    async error => {
+        Toast.clear()
+        const tokenInfo = store.state.tokenInfo
+        if (error.response && error.response.status === 401 && tokenInfo.refresh_token) {
+            // token 过期
+            console.log('token过期啦')
+            try {
+
+                const { data: res } = await exchangeTokenAPI(tokenInfo.refresh_token)
+
+
+                store.commit('updateTokenInfo', { token: res.data.token, refresh_token: tokenInfo.refresh_token })
+
+
+                return instance(error.config)
+            } catch {
+
+                store.commit('cleanState')
+
+                router.replace('/login?pre=' + router.currentRoute.fullPath)
+            }
+        }
         return Promise.reject(error)
     }
 )

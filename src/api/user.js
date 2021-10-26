@@ -1,5 +1,5 @@
 import request from "@/utils/request.js"
-
+import axios from 'axios'
 export const login = data => {
     return request({
         method: 'POST',
