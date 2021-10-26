@@ -91,7 +91,8 @@ export default {
         // 3. 把登录成功的结果，存储到 vuex 中
         this.updateTokenInfo(res.data);
         // 4. 登录成功后，跳转到主页
-        this.$router.push("/");
+        const navPath = this.$router.query || "/";
+        this.$router.replace(navPath);
       }
 
       // try {
