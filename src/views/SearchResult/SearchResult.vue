@@ -38,6 +38,18 @@ export default {
       required: true,
     },
   },
+  watch: {
+    kw() {
+      // 1. 重置关键数据
+      this.page = 1;
+      this.artList = [];
+      this.loading = false;
+      this.finished = false;
+
+      // 2. 请求数据
+      this.initSearchResult();
+    },
+  },
   data() {
     return {
       page: 1,
@@ -48,6 +60,12 @@ export default {
       // 所有数据是否已经加载完毕
       finished: false,
     };
+  },
+  beforeRouteLeave(to, from, next) {
+    from.meta.top = window.scrollY;
+    setTimeout(() => {
+      next();
+    }, 0);
   },
   methods: {
     async initSearchList() {

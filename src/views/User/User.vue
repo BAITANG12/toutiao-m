@@ -76,8 +76,13 @@ export default {
     },
   },
   created() {
-    this.initUserInfo();
+    // this.initUserInfo();
     // console.log(userInfo.name);
+  },
+  // 被激活了
+  activated() {
+    // 只要组件被激活了，就重新初始化用户的信息
+    this.initUserInfo();
   },
   computed: {
     // 从 vuex 中把指定名称的 State 数据映射到组件中使用
